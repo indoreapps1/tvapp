@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight=".25"
+                android:gravity="center|top"
+                android:text="SIGN IN"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight=".5"
+                android:background="@color/colorPrimaryDark"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="3dp"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight=".1" />
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/inputlayout_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight=".25">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/edt_username"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableLeft="@drawable/ic_person_black_24dp"
+                                android:drawablePadding="10dp"
+                                android:hint="Username"
+                                android:singleLine="true"
+                                android:textSize="16sp" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/inputlayout_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight=".25"
+                            app:passwordToggleEnabled="true">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/edt_pass"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:drawableStart="@drawable/ic_lock_outline_black_24dp"
+                                android:drawableLeft="@drawable/ic_lock_outline_black_24dp"
+                                android:drawablePadding="10dp"
+                                android:hint="Password"
+                                android:inputType="textPassword"
+                                android:singleLine="true"
+                                android:textSize="16sp" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/btn_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight=".2"
+                            android:background="@drawable/done_corner_round"
+                            android:text="Login"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_weight=".2"
+                            android:gravity="right|center"
+                            android:orientation="horizontal"
+                            android:visibility="invisible">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Forgot Password?"
+                                android:textColor="@color/colorSecondary"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/resetnow"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dp"
+                                android:layout_marginRight="5dp"
+                                android:text="Reset Now"
+                                android:textColor="@color/colorBlack"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".25" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:background="@drawable/circle"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_anchor="@id/tv_title"
+            app:layout_anchorGravity="center|bottom">
+
+            <com.battlesadda.utilities.CircleImageView
+                android:id="@+id/imageView"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:src="@drawable/userprofile" />
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
+</RelativeLayout>

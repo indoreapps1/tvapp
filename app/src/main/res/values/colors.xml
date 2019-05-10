@@ -7,4 +7,14 @@
     <color name="secProgress_color">#ffe0e0e0</color>
     <color name="solid_color">#44000000</color>
     <color name="gary">#cc999999</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorwhiteDark">#ECEBEB</color>
+    <color name="colorBg">#6ac75010</color>
+    <color name="colorRed">#f3be041a</color>
+    <color name="colorSecondary">#F3A8A7A7</color>
+    <color name="grayDark">#F36B6B6B</color>
+    <color name="colorGreen">#f30d8f30</color>
+    <color name="colorGreenLight">#F305DA3F</color>
+    <color name="colorBlue">#011E68</color>
 </resources>
