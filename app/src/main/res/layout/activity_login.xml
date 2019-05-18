@@ -155,7 +155,7 @@
             app:layout_anchor="@id/tv_title"
             app:layout_anchorGravity="center|bottom">
 
-            <com.battlesadda.utilities.CircleImageView
+            <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="85dp"
                 android:layout_height="85dp"
