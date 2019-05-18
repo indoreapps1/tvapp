@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 import com.xiao.nicevideoplayer.NiceVideoPlayer;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static int NUM_PAGES = 0;
     private ArrayList<String> ImagesArray;
     ArrayList<Integer> integers = new ArrayList<>();
+    RelativeLayout relativeLy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,20 +46,27 @@ public class MainActivity extends AppCompatActivity {
         circlePageIndicator = findViewById(R.id.indicator);
         mPager = findViewById(R.id.pager);
         mNiceVideoPlayer = findViewById(R.id.nice_video_player);
-        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_NATIVE); // or NiceVideoPlayer.TYPE_NATIVE
-        mNiceVideoPlayer.setUp("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", null);
-        mNiceVideoPlayer.start();
-        mNiceVideoPlayer.releasePlayer();
+        relativeLy = findViewById(R.id.relativeLy);
+        setVideo();
+//        mNiceVideoPlayer.setVisibility(View.VISIBLE);
         long a = mNiceVideoPlayer.getDuration();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 mNiceVideoPlayer.setVisibility(View.GONE);
+                relativeLy.setVisibility(View.VISIBLE);
                 viewPagerSetUp();
             }
         }, 60000);
 
 
+    }
+
+    private void setVideo() {
+        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_IJK); // or NiceVideoPlayer.TYPE_NATIVE
+        mNiceVideoPlayer.setUp("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", null);
+        mNiceVideoPlayer.start();
+        mNiceVideoPlayer.releasePlayer();
     }
 
     @Override
@@ -91,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if (currentPage == NUM_PAGES) {
                     currentPage = 0;
+                    mNiceVideoPlayer.setVisibility(View.VISIBLE);
+                    relativeLy.setVisibility(View.GONE);
+                    setVideo();
                 }
                 mPager.setCurrentItem(currentPage++, true);
             }
@@ -103,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                                         public void run() {
                                             handler.post(Update);
                                         }
-                                    }, 1000, 1000);
+                                    }, 11000, 11000);
 
         // Pager listener over indicator
         circlePageIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

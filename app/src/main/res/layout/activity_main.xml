@@ -10,7 +10,7 @@
     <com.xiao.nicevideoplayer.NiceVideoPlayer
         android:id="@+id/nice_video_player"
         android:layout_width="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_height="match_parent">
 
     </com.xiao.nicevideoplayer.NiceVideoPlayer>
@@ -18,7 +18,9 @@
 
     <!--view pager -->
     <RelativeLayout
+        android:id="@+id/relativeLy"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent">
 
         <android.support.v4.view.ViewPager
