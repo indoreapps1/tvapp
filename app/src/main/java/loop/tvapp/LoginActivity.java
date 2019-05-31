@@ -1,5 +1,6 @@
 package loop.tvapp;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 
 import es.dmoral.toasty.Toasty;
+import loop.tvapp.framework.IAsyncWorkCompletedCallback;
+import loop.tvapp.framework.ServiceCaller;
 import loop.tvapp.utilities.Utility;
 
 public class LoginActivity extends AppCompatActivity {
@@ -39,8 +42,33 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginData() {
+        ServiceCaller serviceCaller = new ServiceCaller(this);
         if (validation()) {
-            startActivity(new Intent(this, MainActivity.class));
+            ProgressDialog dialog = new ProgressDialog(this);
+            dialog.show();
+            dialog.setMessage("Please Wait..");
+            dialog.setCancelable(false);
+            serviceCaller.callLoginService(username, password, new IAsyncWorkCompletedCallback() {
+                @Override
+                public void onDone(String workName, boolean isComplete) {
+                    dialog.dismiss();
+                    if (isComplete) {
+                        if (workName.equalsIgnoreCase("\"success\"")) {
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("code", username);
+                            startActivity(intent);
+                            finish();
+                            edt_username.setText("");
+                            edt_pass.setText("");
+                        } else
+                            Toasty.error(LoginActivity.this, "Please Enter Valid Id and Password").show();
+                        edt_pass.setError("Please Enter Valid Id and Password");
+                        edt_pass.requestFocus();
+                    } else
+                        Toasty.error(LoginActivity.this, "Can't reach please try again").show();
+                }
+            });
+
         }
 
     }
@@ -56,14 +84,14 @@ public class LoginActivity extends AppCompatActivity {
             edt_pass.setError("Enter Password");
             edt_pass.requestFocus();
             return false;
-        } else if (!username.equals("android")) {
-            edt_username.setError("Enter Valid  Username");
-            edt_username.requestFocus();
-            return false;
-        } else if (!password.equals("123")) {
-            edt_pass.setError("Enter Valid Password");
-            edt_pass.requestFocus();
-            return false;
+//        } else if (!username.equals("android")) {
+//            edt_username.setError("Enter Valid  Username");
+//            edt_username.requestFocus();
+//            return false;
+//        } else if (!password.equals("123")) {
+//            edt_pass.setError("Enter Valid Password");
+//            edt_pass.requestFocus();
+//            return false;
         }
 
         return true;

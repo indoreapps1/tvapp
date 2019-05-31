@@ -10,63 +10,102 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.google.gson.Gson;
 import com.xiao.nicevideoplayer.NiceVideoPlayer;
 import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
 import com.xiao.nicevideoplayer.TxVideoPlayerController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import es.dmoral.toasty.Toasty;
 import loop.tvapp.adapter.SlidingImage_Adapter;
+import loop.tvapp.framework.IAsyncWorkCompletedCallback;
+import loop.tvapp.framework.ServiceCaller;
+import loop.tvapp.model.ContentData;
 import loop.tvapp.viewpagerindicator.CirclePageIndicator;
 
 
 public class MainActivity extends AppCompatActivity {
     NiceVideoPlayer mNiceVideoPlayer;
-    CirclePageIndicator circlePageIndicator;
-    private static ViewPager mPager;
-    private static int currentPage = 0;
-    private static int NUM_PAGES = 0;
-    private ArrayList<String> ImagesArray;
-    ArrayList<Integer> integers = new ArrayList<>();
-    RelativeLayout relativeLy;
+    String code;
+    List<ContentData> contentDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle bundle = getIntent().getExtras();
+        code = bundle.getString("code");
         init();
+        setVideoApi();
+    }
+
+    private void setVideoApi() {
+        contentDataList = new ArrayList<>();
+        contentDataList.clear();
+        ServiceCaller serviceCaller = new ServiceCaller(this);
+        serviceCaller.callVideoPlayer(Integer.parseInt(code), new IAsyncWorkCompletedCallback() {
+            @Override
+            public void onDone(String workName, boolean isComplete) {
+                if (isComplete) {
+                    ContentData[] contentData = new Gson().fromJson(workName, ContentData[].class);
+                    if (contentData != null) {
+                        contentDataList.addAll(Arrays.asList(contentData));
+                        if (contentDataList != null && contentDataList.size() != 0) {
+                            setVideo();
+                        } else {
+                            Toasty.info(MainActivity.this, "No Data Found").show();
+                        }
+                    }
+                } else {
+                    Toasty.error(MainActivity.this, "Something went wrong").show();
+                }
+            }
+        });
     }
 
     private void init() {
-        ImagesArray = new ArrayList<String>();
-        circlePageIndicator = findViewById(R.id.indicator);
-        mPager = findViewById(R.id.pager);
         mNiceVideoPlayer = findViewById(R.id.nice_video_player);
-        relativeLy = findViewById(R.id.relativeLy);
-        setVideo();
-//        mNiceVideoPlayer.setVisibility(View.VISIBLE);
-        long a = mNiceVideoPlayer.getDuration();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mNiceVideoPlayer.setVisibility(View.GONE);
-                relativeLy.setVisibility(View.VISIBLE);
-                viewPagerSetUp();
-            }
-        }, 60000);
-
 
     }
 
+    int count = 0;
+
     private void setVideo() {
+//        for (count = 0; contentDataList.size() > count; count++) {
         mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_IJK); // or NiceVideoPlayer.TYPE_NATIVE
-        mNiceVideoPlayer.setUp("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", null);
-        mNiceVideoPlayer.start();
-        mNiceVideoPlayer.releasePlayer();
+//            mNiceVideoPlayer.setUp("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", null);
+        if (count == contentDataList.size()) {
+            count = 0;
+            setVideo();
+        } else {
+            if (contentDataList.get(count).getVideo() != null) {
+                mNiceVideoPlayer.setUp("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), null);
+                long a = mNiceVideoPlayer.getDuration();
+                mNiceVideoPlayer.start();
+//                Toast.makeText(this, "" + a, Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setVideo();
+                        count++;
+                    }
+                }, a);
+                mNiceVideoPlayer.releasePlayer();
+            } else {
+                count++;
+                setVideo();
+                Toasty.error(MainActivity.this, "Invalid Video Url").show();
+            }
+        }
     }
 
     @Override
@@ -81,60 +120,4 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void viewPagerSetUp() {
-        ImagesArray.add("https://loopfusion.in/assets/img/LoopFusion/android/android-main.jpg");
-        ImagesArray.add("https://loopfusion.in/assets/img/LoopFusion/iso/iso_main.jpg");
-        ImagesArray.add("https://loopfusion.in/assets/img/LoopFusion/offline/offline-main.jpg");
-        NUM_PAGES = ImagesArray.size();
-        if (ImagesArray != null && ImagesArray.size() > 0) {
-            mPager.setAdapter(new SlidingImage_Adapter(this, ImagesArray));
-            circlePageIndicator.setViewPager(mPager);
-        }
-        final float density = getResources().getDisplayMetrics().density;
-
-//Set circle indicator radius
-        circlePageIndicator.setRadius(5 * density);
-        // Auto start of viewpager
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
-            public void run() {
-                if (currentPage == NUM_PAGES) {
-                    currentPage = 0;
-                    mNiceVideoPlayer.setVisibility(View.VISIBLE);
-                    relativeLy.setVisibility(View.GONE);
-                    setVideo();
-                }
-                mPager.setCurrentItem(currentPage++, true);
-            }
-        };
-        Timer swipeTimer = new Timer();
-        swipeTimer.schedule(new
-
-                                    TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            handler.post(Update);
-                                        }
-                                    }, 11000, 11000);
-
-        // Pager listener over indicator
-        circlePageIndicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                currentPage = position;
-
-            }
-
-            @Override
-            public void onPageScrolled(int pos, float arg1, int arg2) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int pos) {
-
-            }
-        });
-    }
 }

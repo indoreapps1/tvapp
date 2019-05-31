@@ -26,9 +26,10 @@ public class ServiceCaller {
     }
 
     //    call All login data
-    public void callLoginService(final String phone, final IAsyncWorkCompletedCallback workCompletedCallback) {
-        final String url = Contants.SERVICE_BASE_URL + Contants.Login;
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+    public void callLoginService(final String username, final String password, final IAsyncWorkCompletedCallback workCompletedCallback) {
+//        final String url = "http://dnexusapi.veteransoftwares.com/api/values";
+        final String url = "http://dnexusapi.veteransoftwares.com/api/values?tvcode="+username+"&pass="+password;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 workCompletedCallback.onDone(response, true);
@@ -43,7 +44,8 @@ public class ServiceCaller {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("phone", phone);
+//                params.put("tvcode", username);
+//                params.put("pass", password);
                 return params;
             }
         };
@@ -54,5 +56,27 @@ public class ServiceCaller {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(stringRequest);//, tag_json_obj);
     }
+
+//    call video player data
+    public void callVideoPlayer(int code,final IAsyncWorkCompletedCallback workCompletedCallback){
+        final String url="http://dnexusapi.veteransoftwares.com/api/alldata/?tvcode="+code;
+        StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                workCompletedCallback.onDone(response, true);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                workCompletedCallback.onDone(error.getMessage(), false);
+            }
+        });
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        AppController.getInstance().addToRequestQueue(stringRequest);//, tag_json_obj);
+
+    }
+
+
 
 }
