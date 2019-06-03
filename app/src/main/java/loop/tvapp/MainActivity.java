@@ -1,6 +1,7 @@
 package loop.tvapp;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -9,14 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
-import com.xiao.nicevideoplayer.NiceVideoPlayer;
-import com.xiao.nicevideoplayer.NiceVideoPlayerManager;
-import com.xiao.nicevideoplayer.TxVideoPlayerController;
+import com.khizar1556.mkvideoplayer.MKPlayerActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +30,13 @@ import loop.tvapp.framework.IAsyncWorkCompletedCallback;
 import loop.tvapp.framework.ServiceCaller;
 import loop.tvapp.model.ContentData;
 import loop.tvapp.viewpagerindicator.CirclePageIndicator;
+import loop.tvapp.xvideoplayer.MxTvPlayerWidget;
+import loop.tvapp.xvideoplayer.MxVideoPlayer;
+import loop.tvapp.xvideoplayer.MxVideoPlayerWidget;
 
 
 public class MainActivity extends AppCompatActivity {
-    NiceVideoPlayer mNiceVideoPlayer;
+    MxTvPlayerWidget mNiceVideoPlayer;
     String code;
     List<ContentData> contentDataList;
 
@@ -72,52 +75,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mNiceVideoPlayer = findViewById(R.id.nice_video_player);
+//        mNiceVideoPlayer = findViewById(R.id.nice_video_player);
 
     }
 
     int count = 0;
 
     private void setVideo() {
-//        for (count = 0; contentDataList.size() > count; count++) {
-        mNiceVideoPlayer.setPlayerType(NiceVideoPlayer.TYPE_IJK); // or NiceVideoPlayer.TYPE_NATIVE
-//            mNiceVideoPlayer.setUp("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", null);
         if (count == contentDataList.size()) {
             count = 0;
             setVideo();
         } else {
-            if (contentDataList.get(count).getVideo() != null) {
-                mNiceVideoPlayer.setUp("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), null);
-                long a = mNiceVideoPlayer.getDuration();
-                mNiceVideoPlayer.start();
-//                Toast.makeText(this, "" + a, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, count+""+contentDataList.get(count).getVideo(), Toast.LENGTH_SHORT).show();
+            mNiceVideoPlayer = new MxTvPlayerWidget(MainActivity.this);
+            LinearLayout linearLayout = new LinearLayout(this);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        setVideo();
-                        count++;
-                    }
-                }, a);
-                mNiceVideoPlayer.releasePlayer();
-            } else {
-                count++;
-                setVideo();
-                Toasty.error(MainActivity.this, "Invalid Video Url").show();
-            }
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+
+            mNiceVideoPlayer.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            linearLayout.addView(mNiceVideoPlayer);
+            setContentView(linearLayout);
+            mNiceVideoPlayer.autoStartPlay("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), "Dneux");
+//            mNiceVideoPlayer.startWindowFullscreen();
+            //LinearLayOut Setup
+
+
+            MediaPlayer mp = MediaPlayer.create(this, Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()));
+            int a = mp.getDuration();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mNiceVideoPlayer.clearFocus();
+                    mNiceVideoPlayer.release();
+                    count++;
+                    setVideo();
+                }
+            }, a);
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        NiceVideoPlayerManager.instance().releaseNiceVideoPlayer();
+        mNiceVideoPlayer.release();
     }
 
     @Override
     public void onBackPressed() {
-        if (NiceVideoPlayerManager.instance().onBackPressd()) return;
         super.onBackPressed();
+        mNiceVideoPlayer.release();
     }
 
 }
