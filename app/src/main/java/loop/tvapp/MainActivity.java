@@ -1,6 +1,7 @@
 package loop.tvapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Bundle bundle = getIntent().getExtras();
-        code = bundle.getString("code");
+        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        code= sharedPreferences.getString("id", null);
         init();
         setVideoApi();
     }
@@ -99,10 +100,6 @@ public class MainActivity extends AppCompatActivity {
             linearLayout.addView(mNiceVideoPlayer);
             setContentView(linearLayout);
             mNiceVideoPlayer.autoStartPlay("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), "Dneux");
-//            mNiceVideoPlayer.startWindowFullscreen();
-            //LinearLayOut Setup
-
-
             MediaPlayer mp = MediaPlayer.create(this, Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()));
             int a = mp.getDuration();
             new Handler().postDelayed(new Runnable() {
@@ -120,13 +117,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mNiceVideoPlayer.release();
+        if (mNiceVideoPlayer != null) {
+            mNiceVideoPlayer.release();
+        }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        mNiceVideoPlayer.release();
+        if (mNiceVideoPlayer != null) {
+            mNiceVideoPlayer.release();
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package loop.tvapp;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -54,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
                     dialog.dismiss();
                     if (isComplete) {
                         if (workName.equalsIgnoreCase("\"success\"")) {
+                            SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("id", username);
+                            editor.apply();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("code", username);
                             startActivity(intent);
