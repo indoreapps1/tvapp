@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.Button;
 
 import es.dmoral.toasty.Toasty;
-import loop.tvapp.framework.IAsyncWorkCompletedCallback;
-import loop.tvapp.framework.ServiceCaller;
+import loop.tvapp.deleter.IAsyncWorkCompletedCallback;
+import loop.tvapp.deleter.ServiceCaller;
 import loop.tvapp.utilities.Utility;
 
 public class LoginActivity extends AppCompatActivity {

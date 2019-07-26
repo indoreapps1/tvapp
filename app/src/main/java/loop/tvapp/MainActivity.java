@@ -1,39 +1,24 @@
 package loop.tvapp;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.google.gson.Gson;
-import com.khizar1556.mkvideoplayer.MKPlayerActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import es.dmoral.toasty.Toasty;
-import loop.tvapp.adapter.SlidingImage_Adapter;
-import loop.tvapp.framework.IAsyncWorkCompletedCallback;
-import loop.tvapp.framework.ServiceCaller;
+import loop.tvapp.deleter.IAsyncWorkCompletedCallback;
+import loop.tvapp.deleter.ServiceCaller;
 import loop.tvapp.model.ContentData;
-import loop.tvapp.viewpagerindicator.CirclePageIndicator;
 import loop.tvapp.xvideoplayer.MxTvPlayerWidget;
-import loop.tvapp.xvideoplayer.MxVideoPlayer;
-import loop.tvapp.xvideoplayer.MxVideoPlayerWidget;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -46,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
-        code= sharedPreferences.getString("id", null);
+        code = sharedPreferences.getString("id", null);
         init();
         setVideoApi();
     }
@@ -55,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         contentDataList = new ArrayList<>();
         contentDataList.clear();
         ServiceCaller serviceCaller = new ServiceCaller(this);
-        serviceCaller.callVideoPlayer(Integer.parseInt(code), new IAsyncWorkCompletedCallback() {
+        serviceCaller.callVideoPlayer(code, new IAsyncWorkCompletedCallback() {
             @Override
             public void onDone(String workName, boolean isComplete) {
                 if (isComplete) {
@@ -101,16 +86,18 @@ public class MainActivity extends AppCompatActivity {
             setContentView(linearLayout);
             mNiceVideoPlayer.autoStartPlay("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), "Dneux");
             MediaPlayer mp = MediaPlayer.create(this, Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()));
-            int a = mp.getDuration();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mNiceVideoPlayer.clearFocus();
-                    mNiceVideoPlayer.release();
-                    count++;
-                    setVideo();
-                }
-            }, a);
+            if (mp != null) {
+                int a = mp.getDuration();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mNiceVideoPlayer.clearFocus();
+                        mNiceVideoPlayer.release();
+                        count++;
+                        setVideo();
+                    }
+                }, a);
+            }
         }
     }
 

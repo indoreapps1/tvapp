@@ -1,4 +1,4 @@
-package loop.tvapp.framework;
+package loop.tvapp.deleter;
 
 import android.app.Application;
 import android.text.TextUtils;

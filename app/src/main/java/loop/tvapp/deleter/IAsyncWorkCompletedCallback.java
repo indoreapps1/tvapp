@@ -1,4 +1,4 @@
-package loop.tvapp.framework;
+package loop.tvapp.deleter;
 
 /**
  * Created by lalit on 7/25/2017.

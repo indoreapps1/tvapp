@@ -1,4 +1,4 @@
-package loop.tvapp.framework;
+package loop.tvapp.deleter;
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;

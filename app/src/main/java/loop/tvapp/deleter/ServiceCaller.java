@@ -1,4 +1,4 @@
-package loop.tvapp.framework;
+package loop.tvapp.deleter;
 
 import android.content.Context;
 
@@ -11,8 +11,6 @@ import com.android.volley.toolbox.StringRequest;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import loop.tvapp.utilities.Contants;
 
 
 /**
@@ -28,7 +26,7 @@ public class ServiceCaller {
     //    call All login data
     public void callLoginService(final String username, final String password, final IAsyncWorkCompletedCallback workCompletedCallback) {
 //        final String url = "http://dnexusapi.veteransoftwares.com/api/values";
-        final String url = "http://dnexusapi.veteransoftwares.com/api/values?tvcode="+username+"&pass="+password;
+        final String url = "http://dnexusapi.veteransoftwares.com/api/values?tvcode=" + username + "&pass=" + password;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -57,10 +55,10 @@ public class ServiceCaller {
         AppController.getInstance().addToRequestQueue(stringRequest);//, tag_json_obj);
     }
 
-//    call video player data
-    public void callVideoPlayer(int code,final IAsyncWorkCompletedCallback workCompletedCallback){
-        final String url="http://dnexusapi.veteransoftwares.com/api/alldata/?tvcode="+code;
-        StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+    //    call video player data
+    public void callVideoPlayer(String code, final IAsyncWorkCompletedCallback workCompletedCallback) {
+        final String url = "http://dnexusapi.veteransoftwares.com/api/alldata/?tvcode=" + code;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 workCompletedCallback.onDone(response, true);
@@ -76,7 +74,6 @@ public class ServiceCaller {
         AppController.getInstance().addToRequestQueue(stringRequest);//, tag_json_obj);
 
     }
-
 
 
 }
