@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -14,10 +15,17 @@
     <!--android:visibility="visible">-->
 
     <!--</com.xiao.nicevideoplayer.NiceVideoPlayer>-->
-    <loop.tvapp.xvideoplayer.MxTvPlayerWidget
-        android:id="@+id/nice_video_player"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<loop.tvapp.xvideoplayer.MxTvPlayerWidget-->
+    <!--android:id="@+id/nice_video_player"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-    </loop.tvapp.xvideoplayer.MxTvPlayerWidget>
+    <!--</loop.tvapp.xvideoplayer.MxTvPlayerWidget>-->
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center" />
 </LinearLayout>
