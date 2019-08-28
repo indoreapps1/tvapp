@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -22,6 +21,14 @@
 
     <!--</loop.tvapp.xvideoplayer.MxTvPlayerWidget>-->
 
+    <TextView
+        android:id="@+id/option"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/ic_more_vert_black_24dp" />
 
     <ProgressBar
         android:id="@+id/progress"

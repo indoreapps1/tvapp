@@ -1,14 +1,18 @@
 package loop.tvapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -44,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
     String code;
     List<ContentData> contentDataList;
     ProgressBar progress;
+    int count = 0;
+    SimpleExoPlayer player;
+    SimpleExoPlayerView simpleExoPlayerView;
+    DataSource.Factory dataSourceFactory;
+    ExtractorsFactory extractorsFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,14 +74,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDone(String workName, boolean isComplete) {
                 if (isComplete) {
-                    ContentData[] contentData = new Gson().fromJson(workName, ContentData[].class);
-                    if (contentData != null) {
-                        contentDataList.addAll(Arrays.asList(contentData));
-                        if (contentDataList != null && contentDataList.size() != 0) {
-
-                            setVideo();
-                        } else {
-                            Toasty.info(MainActivity.this, "No Data Found").show();
+                    if (!workName.trim().equalsIgnoreCase("\"no\"")) {
+                        ContentData[] contentData = new Gson().fromJson(workName, ContentData[].class);
+                        if (contentData != null) {
+                            contentDataList.addAll(Arrays.asList(contentData));
+                            if (contentDataList != null && contentDataList.size() != 0) {
+                                setVideo();
+                            } else {
+                                Toasty.info(MainActivity.this, "No Data Found").show();
+                            }
                         }
                     }
                 } else {
@@ -83,63 +93,76 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    TextView option;
+
     private void init() {
         progress = findViewById(R.id.progress);
-
+        option = findViewById(R.id.option);
+        option.setOnClickListener(v -> {
+            showPopup();
+        });
     }
 
-    int count = 0;
-    SimpleExoPlayer player;
+    private void showPopup() {
+        PopupMenu popup = new PopupMenu(MainActivity.this, option);
+        //Inflating the Popup using xml file
+        popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
+
+        //registering popup with OnMenuItemClickListener
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.action_logout) {
+                    SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear();
+                    editor.apply();
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                return true;
+            }
+        });
+
+        popup.show();//showing popup menu
+    }
+
 
     private void setVideo() {
         if (count == contentDataList.size()) {
             count = 0;
             setVideo();
         } else {
-            String vv = contentDataList.get(count).getVideo();
-            if (vv != null && !vv.equalsIgnoreCase("") && !vv.equalsIgnoreCase("null")) {
-                BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-                TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-                TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-                player = ExoPlayerFactory.newSimpleInstance(MainActivity.this, trackSelector);
-                SimpleExoPlayerView simpleExoPlayerView = new SimpleExoPlayerView(MainActivity.this);
-                simpleExoPlayerView.setPlayer(player);
-                DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(MainActivity.this, Util.getUserAgent(MainActivity.this, "lk"));
-                ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-                MediaSource videoSource = new ExtractorMediaSource(Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()), dataSourceFactory, extractorsFactory, null, null);
-
-//            mNiceVideoPlayer = new MxTvPlayerWidget(MainActivity.this);
-                LinearLayout linearLayout = new LinearLayout(this);
-                linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-                linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-
-                simpleExoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
-                linearLayout.addView(simpleExoPlayerView);
-                setContentView(linearLayout);
-                player.prepare(videoSource);
-                player.setPlayWhenReady(true);
-//            player.autoStartPlay("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo(), "Dneux");
-                MediaPlayer mp = MediaPlayer.create(this, Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()));
-                if (mp != null) {
-                    int a = mp.getDuration();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-//                            player.clearVideoSurface();
-                            player.release();
-                            count++;
-                            setVideo();
-                        }
-                    }, a);
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+            player = ExoPlayerFactory.newSimpleInstance(MainActivity.this, trackSelector);
+            simpleExoPlayerView = new SimpleExoPlayerView(MainActivity.this);
+            simpleExoPlayerView.setPlayer(player);
+            dataSourceFactory = new DefaultDataSourceFactory(MainActivity.this, Util.getUserAgent(MainActivity.this, "lk"));
+            extractorsFactory = new DefaultExtractorsFactory();
+            MediaSource videoSource = new ExtractorMediaSource(Uri.parse("http://dnexus.veteransoftwares.com" + contentDataList.get(count).getVideo()), dataSourceFactory, extractorsFactory, null, null);
+            LinearLayout linearLayout = new LinearLayout(this);
+            linearLayout.setOrientation(LinearLayout.VERTICAL);
+            linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            simpleExoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT));
+            linearLayout.addView(simpleExoPlayerView);
+            setContentView(linearLayout);
+            player.prepare(videoSource);
+            player.setPlayWhenReady(true);
+            long a = player.getDuration();
+            simpleExoPlayerView.setUseController(false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    player.release();
+                    player = null;
+                    count++;
+                    setVideo();
                 }
-            } else {
-                count++;
-                setVideo();
-
-            }
+            }, a);
         }
     }
 

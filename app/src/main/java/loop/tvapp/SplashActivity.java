@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -22,5 +21,6 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+//        getSupportFragmentManager().beginTransaction().replace(R.id.sp, ViewPlayerFragment.newInstance("", "")).commit();
     }
 }
